@@ -4,6 +4,16 @@
 	<h1>{{ $student->getFullName() }}</h1>
 @endsection
 
+<?php 
+
+	// array-reduce
+	// http://www.php.net/manual/en/function.array-reduce.php
+	function skill_labels($s, $n){
+			return($s . ", " . $n["label"]);
+	}
+
+ ?>
+
 @section('content')
 	<ul>
 		<li>email: {{ $student->email }}</li>
@@ -17,6 +27,19 @@
 						echo $year = Year::find($student->year_id)->label;
 					}
 				?></li>
+		<li>
+			<?php
+				
+				$skills = Student::find($student->id)->skills->toArray();
+
+				// // pull off the 1st one
+				$initial = array_shift($skills);
+
+				// // echo the function above
+				echo "skills: " . array_reduce($skills, "skill_labels", $initial["label"]);
+
+			?>
+		</li>
 	</ul>
 
 	<p><small>{{ $student->updated_at }}</small></p>

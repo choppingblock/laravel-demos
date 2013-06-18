@@ -16,7 +16,8 @@
 
 	{{ Form::open(array('url' => 'students/create', 'class' => 'pure-form pure-form-aligned') ) }}
         <fieldset>
-        
+            <legend>Basic Info</legend>
+
         	<!-- first name field -->
             <div class="pure-control-group">
                 {{ Form::label('first_name', 'First Name') }}
@@ -65,24 +66,35 @@
                 <?php $year_options = array('' => 'Select') + Year::lists('label', 'id'); ?>
                 {{ Form::select('year_id', $years = $year_options, Input::old('year_id')); }}
             </div>
-
+        </fieldset>
+        <fieldset>
+            <legend>Skills</legend>
             <!-- skills input -->
             <div class="pure-controls">
                 <?php foreach ($skills as $skill): ?>
-<!--                     <label for="{{ $skill->label }}" class="pure-checkbox">
-                     <input id="{{ $skill->label }}" type="checkbox" checked="{{ Input::old($skill->label) }}"> {{ $skill->label }}</label>
- -->                    
-                    <?php $v = preg_replace("![^a-z0-9]+!i", "-", $skill->label); ?>
-                    <?php echo $v; ?>
-                    {{ Form::checkbox($skill->label, $v, Input::old($skill->label)); }}
-                    {{ Form::label($skill->label, $skill->label); }}
+
+                    <?php
+                        // replace/escape for spaces
+                        $label = preg_replace("![^a-z0-9]+!i", "-", $skill->label);
+                        $label = 'skill_' . $label;
+                    ?>
+
+                    <!-- keeping the laravel generated version here for now -->
+                    <!-- Not sure about the checkbox value, cant seem to access it in controller -->
+                    <!-- {{ Form::checkbox($label, $label, Input::old($label)); }}
+                    {{ Form::label($label, $skill->label); }} -->
+
+                    <label for="<?php echo $label ?>" class="pure-checkbox">
+                        {{ Form::checkbox($label, $label, Input::old($label), array( 'id'=>$label )); }} <?php echo $skill->label ?>
+                    </label>
                 <?php endforeach; ?>
             </div>
-
-        	<nav class="formnav">
-        		{{ HTML::linkRoute('students', 'Students', null, array('class' => 'pure-button')) }}
-        		{{ Form::submit('Add Student', array('class' => 'pure-button pure-button-primary')) }}
-        	</nav>
         </fieldset>
+        
+    	<nav class="formnav">
+    		{{ HTML::linkRoute('students', 'Students', null, array('class' => 'pure-button')) }}
+    		{{ Form::submit('Add Student', array('class' => 'pure-button pure-button-primary')) }}
+    	</nav>
+        
 	{{ Form::close() }}
 @endsection

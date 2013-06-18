@@ -40,34 +40,18 @@ class StudentsController extends BaseController {
 			'year_id'=>Input::get('year_id')
 		));
 
-		//var_dump($student);
-
-		// $s = array(
-		// 	'student_id' => $student->id,
-		// 	'skill_id' => 1
-		// );
-
-		// $skill = Skill::find(1);
-
-		// var_dump($skill);
-
-		//$student->skills()->insert($skill);
-
+		// enter the data for skills checkboxes
+		// loop through skills
 		$skills = DB::table('skills')->get();
 		foreach ($skills as $skill) {
-			var_dump(Input::get($skill->label));
-			if( $skill->label = Input::get($skill->label) ) {
-				$student->skills()->attach($skill->id);
+			// replace/escape for spaces
+			$label = preg_replace("![^a-z0-9]+!i", "-", $skill->label);
+			$label = 'skill_' . $label;
 
+			if( $label = Input::get($label) ) {
+				$student->skills()->attach($skill->id);
 			}
 		}
-
-		//$student->skills()->attach(1);
-
-		// Not sure about this
-		Skill_Student::create(
-			array()
-		);
 
 		return Redirect::route('students')
 			->with('message', 'Student was created successfully!');
@@ -98,6 +82,49 @@ class StudentsController extends BaseController {
 			$student->blog_url = Input::get('blog_url');
 			$student->birthday = Input::get('birthday');
 			$student->year_id = Input::get('year_id');
+
+			$original = array();
+			$new = array();
+
+			// loop through skills
+			$skills = DB::table('skills')->get();
+			foreach ($skills as $skill) {
+				//array_push($all, $skill->id);
+				// replace/escape for spaces
+				$label = preg_replace("![^a-z0-9]+!i", "-", $skill->label);
+				$label = 'skill_' . $label;
+
+				// populate new array
+				if( $label = Input::get($label) ) {
+					array_push($new, $skill->id);
+				}
+			}
+
+			// populate original array
+			$related_skills = Student::find($id)->skills;
+			foreach ($related_skills as $related_skill) {
+				array_push($original, $related_skill->pivot->skill_id);
+			}
+
+			// figure it out
+			$int = array_values(array_intersect($original, $new)); //C = A ^ B
+            $original = array_values(array_diff($original, $int)); //A' = A - C
+            $new = array_values(array_diff($new, $int)); //B' = B - C
+
+			// Log::info('$original is ' . implode(", ",$original) );
+			// Log::info('$new is ' . implode(", ",$new) );
+
+			// remove any items
+			foreach ($original as $key) {
+				// Log::info('Need to remove ' . Skill::find($key)->label );
+				$item = Skill_Student::where('student_id', '=', $id)->where('skill_id', '=', $key)->delete();
+			}
+
+			// attach any items
+			foreach ($new as $key) {
+				// Log::info('Need to add ' . Skill::find($key)->label );
+				$student->skills()->attach($key);
+			}
 
 			$student->save();
 

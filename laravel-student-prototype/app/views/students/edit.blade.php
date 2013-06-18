@@ -16,7 +16,8 @@
 
 	{{ Form::open(array('url' => 'student/update', 'method' => 'put', 'class' => 'pure-form pure-form-aligned')) }}
         <fieldset>
-            
+            <legend>Basic Info</legend>
+
             <!-- first name field -->
             <div class="pure-control-group">
                 {{ Form::label('first_name', 'First Name') }}
@@ -65,6 +66,43 @@
                 <?php $year_options = array('' => 'Select') + Year::lists('label', 'id'); ?>
                 {{ Form::select('year_id', $years = $year_options, $student->year_id); }}
             </div>
+        </fieldset>
+        <fieldset>
+            <legend>Skills</legend>
+            <!-- skills input -->
+
+            <?php
+                // grab the array of selected students
+                $selected_skills = Student::find($student->id)->skills->toArray();
+            ?>
+
+            <div class="pure-controls">
+                <?php foreach ($skills as $skill): ?>
+
+                    <?php
+                        // replace/escape for spaces
+                        $label = preg_replace("![^a-z0-9]+!i", "-", $skill->label);
+                        $label = 'skill_' . $label;
+
+                        $checked = false;
+                        foreach ($selected_skills as $selected_skill) {
+                            if ($selected_skill['id'] == $skill['id']) {
+                                $checked = true;
+                            }
+                        }
+                    ?>
+
+                    <!-- keeping the laravel generated version here for now -->
+                    <!-- Not sure about the checkbox value, cant seem to access it in controller -->
+                    <!-- {{ Form::checkbox($label, $label, Input::old($label)); }}
+                    {{ Form::label($label, $skill->label); }} -->
+
+                    <label for="<?php echo $label ?>" class="pure-checkbox">
+                        {{ Form::checkbox($label, $label, $checked, array( 'id'=>$label )); }} <?php echo $skill->label ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </fieldset>
 
             {{ Form::hidden('id', $student->id) }}
 
@@ -73,6 +111,6 @@
                 {{ Form::submit('Update Student', array('class' => 'pure-button pure-button-primary')) }}
             </nav>
 
-        </fieldset>
+        
 	{{ Form::close() }}
 @endsection

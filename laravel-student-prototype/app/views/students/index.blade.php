@@ -41,8 +41,6 @@
 					
 					$skills = Student::find($student->id)->skills->toArray();
 
-					//var_dump(count($skills));
-
 					// // pull off the 1st one
 					$initial = array_shift($skills);
 
