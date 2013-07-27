@@ -14,6 +14,10 @@
 	
 	{{ HTML::style('assets/css/pure/pure-min.css') }}
 	{{ HTML::style('assets/css/styles.css') }}
+	{{ HTML::style('assets/css/pikaday.css') }}
+
+	{{ HTML::script('assets/js/moment.min.js') }}
+	{{ HTML::script('assets/js/pikaday.js') }}
 	
 </head>
 <body>
@@ -35,5 +39,17 @@
 			@yield('content')
 		</div>
 	</div>
+
+	<script>
+        var picker = new Pikaday({
+        field: document.getElementById('birthday'),
+        format: 'YYYY-MM-DD',
+        yearRange: [1965,2013]
+        // onSelect: function() {
+        //     console.log(this.getMoment().format('YYYY-MM-DD'));
+        // }
+    });
+    </script>
+	
 </body>
 </html>

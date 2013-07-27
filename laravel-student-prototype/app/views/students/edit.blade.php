@@ -54,7 +54,7 @@
                 {{ Form::text('blog_url', $student->blog_url) }}
             </div>
 
-            <!-- blog url field -->
+            <!-- birthday field -->
             <div class="pure-control-group">
                 {{ Form::label('birthday', 'Birthday') }}
                 {{ Form::text('birthday', $student->birthday) }}
