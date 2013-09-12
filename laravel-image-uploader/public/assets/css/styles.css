@@ -1,0 +1,20 @@
+/* 
+ * styles.scss
+ * Built using SASS
+ *
+ * @author: Chopping Block (choppingblock.com)
+ *
+ */
+.wrap {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto; }
+
+header h1 {
+  margin-bottom: 0.0em; }
+
+.pure-table {
+  margin-top: 1em; }
+
+.formnav {
+  margin-top: 1.5em; }
